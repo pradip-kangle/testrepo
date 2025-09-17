@@ -1,0 +1,38 @@
+[Unit]
+Description=Restart All Stopped API Containers
+After=network.target
+
+[Service]
+Type=simple
+User=root
+#WorkingDirectory=/home/cloudusr/repo/api/LGT/WebAPI  # Set the working directory
+Environment=PATH=/usr/local/bin:/usr/bin:/bin  # Add paths to the environment
+#ExecStart=api-deployment.sh  # Full path to the script
+Environment=NVM_DIR=/root/.nvm
+ExecStart=/bin/bash -c 'source $NVM_DIR/nvm.sh && nvm use 20.11.1 && ws-parser-deployment.sh'
+ExecStartPost=/bin/true
+Restart=always
+RestartSec=5  # Wait 5 seconds before restarting
+
+[Install]
+WantedBy=multi-user.target
+===================================================
+./ws-parser-deployment.sh
+=====================================================insightapi.service
+[Unit]
+Description=Example .NET Web API App running on Linux
+
+[Service]
+WorkingDirectory=/var/www/LGT-API/DotNetAPI
+ExecStart=/usr/local/share/dotnet/dotnet/dotnet  /var/www/LGT-API/DotNetAPI/AdvisoryTool.dll
+Restart=always
+# Restart service after 10 seconds if the dotnet service crashes:
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=dotnet-example
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Development
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target
